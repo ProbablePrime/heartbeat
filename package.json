@@ -1,7 +1,7 @@
 {
-  "name": "jasonkuhrt-heartbeat",
+  "name": "prime-heartbeat",
   "version": "0.1.0",
-  "description": "A good heartbeat timer",
+  "description": "A heartbeat monitor",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jasonkuhrt/heartbeat.git"
+    "url": "git://github.com/probableprime/heartbeat.git"
   },
   "keywords": [
     "timer",
@@ -23,10 +23,16 @@
     "pulse",
     "keepalive"
   ],
-  "author": "Jason Kuhrt <jasonkuhrt@me.com> (http://jasonkuhrt.com/)",
+  "author": "probableprime",
+  "contributors": [
+    {
+      "name":"Jason Kuhrt",
+      "email":"jasonkuhrt@me.com"
+    }
+  ],
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/jasonkuhrt/heartbeat/issues"
+    "url": "https://github.com/probableprime/heartbeat/issues"
   },
   "dependencies": {
     "jasonkuhrt-counter": "0.0.1"

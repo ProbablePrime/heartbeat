@@ -4,21 +4,21 @@ module.exports = setHeartbeat
 module.exports.setHeartbeat = setHeartbeat
 module.exports.clear = clearHeartbeat
 
-
-
 // Heartbeat h; Int c, i, j;  :: ([c] -> *?) i, j? -> h
 //
 function setHeartbeat(f, ms){
   var thumps = Counter(0)
   var thump = thumps.inc
   var interval = setInterval(onInterval, ms)
-  function onInterval(){
+  function onInterval() {
     if (did_flatline(thumps)) {
-      clearInterval(interval)
       f()
+    } else {
+      thumps.reset();
     }
   }
   thump._interval = interval
+  thump._counter = thumps;
   return thump
 }
 
@@ -30,12 +30,7 @@ function clearHeartbeat(heartbeat){
 }
 
 
-
-
-
-
 // Private
-
 function did_flatline(thumps){
   return !thumps.value() ? thumps.reset() && true : false
 }

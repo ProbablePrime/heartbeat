@@ -1,6 +1,13 @@
-# heartbeat [![Build Status](https://travis-ci.org/jasonkuhrt/heartbeat.png?branch=master)](https://travis-ci.org/jasonkuhrt/heartbeat) [![Code Climate](https://codeclimate.com/github/jasonkuhrt/heartbeat.png)](https://codeclimate.com/github/jasonkuhrt/heartbeat)
+# heartbeat
 
-A good heartbeat timer
+A heartbeat monitor.
+
+This module is based off [jasonkuhrt-heartbeat](https://github.com/jasonkuhrt/heartbeat) 
+but differes in that the heartbeat will continue to call the flatlinefunction unless there 
+has been at least 1 call to the heartbeat.
+
+Its designed to monitor data streams on an open connection for some form of state. Where a
+connection being open isn't enough to determine if something is healthy.
 
 
 ## Installation
@@ -10,37 +17,25 @@ A good heartbeat timer
 ## Example
 ```js
 var tcp = require('net');
-var heartbeat = require('heartbeat');
+var heartbeat = require('prime-heartbeat');
 
-tcp.createServer(9000, function(socket){
-  /* If we the socket ever doesn't send data for ten
-  consecutive seconds, consider it dead.*/
-  var thump = heartbeat(onFlatline, 10000);
-  socket.on('data', thump);
+var thump = heartbeat(onFlatLine,500);
 
-  function onFlatline(){
-    log.warn('Socket timed out, destroying socket.');
-    socket.removeListener('data', thump);
-    socket.removeListener('end', onCleanDisconnect);
-    socket.destroy();
-  }
+var socket = new net.Socket();
+socket.connect(3000,'127.0.0.1');
 
-  /* On a clean disconnect destroy the heartbeat.*/
+socket.on('data', thump);
 
-  socket.once('end', onCleanDisconnect);
-
-  function onCleanDisconnect(){
-    socket.removeListener('data', thump);
-    heartbeat.clear(thump);
-  }
-});
+function onFlatLine() {
+  console.log('Remote device isnt sending any data');
+}
 ```
 ```
 > npm start
 ...
-... (some time passes, your app does stuff, then maybe...)
+... (Socket opens, streams in data. After some period the remote device misbehaves)
 ...
-Socket timed out, destroying socket.
+Remote device isnt sending any data
 ```
 
 ## API
@@ -53,7 +48,7 @@ Socket timed out, destroying socket.
 
   Returns a heartbeat instance. A heartbeat instance is a function. Invoke it to keep the heartbeat going. The identifier is typically `thump` (see guide).
 
-  - `onFlatline` is invoked when/if `thump` is *not* invoked during an interval.
+  - `onFlatline` is invoked  and will continue to invoke when/if `thump` is *not* invoked during an interval until cleared.
 
   - `intervalMs` sets the time between thump checks.
 
@@ -70,4 +65,4 @@ Socket timed out, destroying socket.
 
 ## Guide
 
-https://github.com/jasonkuhrt/heartbeat/blob/master/test/index.js
+https://github.com/probableprime/heartbeat/blob/master/test/index.js

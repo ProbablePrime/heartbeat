@@ -11,11 +11,17 @@ describe('Heartbeat', function(){
   afterEach(clearInterval.bind(null, inter))
 
   it('invokes callback after elapsed ms', function(done){
-    Heartbeat(returnsToAsync(done), 10)
+      var thump = Heartbeat(function() {
+        Heartbeat.clear(thump)
+        returnsToAsync(done)()
+      },10)
   })
 
-  it('callback invoked immediately if timeout is to 0', function(done){
-    Heartbeat(returnsToAsync(done), 0)
+  it('callback invoked immediately if timeout is to 0', function(done) {
+    var thump = Heartbeat(function() {
+      Heartbeat.clear(thump)
+      returnsToAsync(done)()
+    },0)
   })
 
   it('returns a function that when executed delays callback execution', function(done){
@@ -38,9 +44,29 @@ describe('Heartbeat', function(){
     setTimeout(assertNoCount(count, done), 15)
   })
 
+  it('Continues to invoke the callback until the heartbeat is cleared', function(done){
+      var thump = Heartbeat(count.inc,10);
+      setTimeout(Heartbeat.clear,40,thump);
+      setTimeout(function(){
+          assert.equal(count.value(),3);
+          done();
+      },50);
+  })
+
+  it('invokes a callback if the returned function is not called enough', function(done) {
+      var thump = Heartbeat(function(){
+        count.inc()
+      },10);
+      inter = setInterval(thump,5);
+      setTimeout(clearInterval,30, inter);
+      setTimeout(function() {
+        console.log('assert');
+        console.log(thump._counter.value());
+        assert.equal(count.value(),3);
+        done();
+      },70);
+  });
 })
-
-
 
 // Domain Helpers
 
