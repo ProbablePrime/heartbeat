@@ -3,7 +3,7 @@
 A heartbeat monitor.
 
 This module is based off [jasonkuhrt-heartbeat](https://github.com/jasonkuhrt/heartbeat) 
-but differes in that the heartbeat will continue to call the flatlinefunction unless there 
+but differes in that the heartbeat will continue to call the flatline function unless there 
 has been at least 1 call to the heartbeat.
 
 Its designed to monitor data streams on an open connection for some form of state. Where a
